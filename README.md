@@ -17,4 +17,4 @@ Tool: pgAdmin / psql
 🚀 Goals
 ✔️ Master SQL fundamentals
 ✔️ Build and query databases efficiently
-✔️ Apply SQL for data storytelling & analysis
+✔️ Apply SQL for data storytelling & analysis.
