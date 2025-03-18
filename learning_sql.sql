@@ -32,3 +32,59 @@ SELECT first_name from teachers WHERE first_name ILIKE 'sam%';
 SELECT * FROM teachers WHERE school = 'Myers Middle School' AND salary < 40000; --teacher from MMS with salary less than $40000 
 
 SELECT * FROM teachers WHERE school = 'F.D. Roosevelt HS' AND (salary < 38000 OR salary > 40000); --teachers from F.D.R HS with salary less than  38000 or more than 40000
+
+
+--CHAPTER 3 -Data Types
+
+--Character data types
+CREATE TABLE char_data_types (
+varchar_column varchar(10),						 char_column char(10),
+text_column text
+); --create a table for the 3 types of character data type 
+
+INSERT INTO char_data_types	VALUES ('abc', 'abc', 'abc'), ('defghi', 'defghi', 'defghi'); --insert values into the table
+
+COPY char_data_types TO '/Users/augustineennin/Desktop/typetest.txt'
+WITH (FORMAT CSV, HEADER, DELIMITER '|'); --copy the table to a desktop in a csv format
+
+--Number data types
+CREATE TABLE number_data_types (
+numeric_column numeric(20,5), real_column real, double_column double precision
+);
+
+INSERT INTO number_data_types VALUES (.7, .7, .7), (2.13579, 2.13579, 2.13579), (2.1357987654, 2.1357987654, 2.1357987654);
+
+SELECT * FROM number_data_types;
+
+--Date and Time
+CREATE TABLE date_time_types(
+timestamp_column timestamp with time zone,
+interval_column interval
+);
+INSERT INTO date_time_types 
+VALUES
+('2018-12-31 01:00 EST', '2 days'),
+('2018-12-31 01:00 -8', '1 month'),
+('2018-12-31 01:00 Australia/Melbourne', '1 century'),
+(now(), '1 week');
+SELECT * FROM date_time_types;
+
+--Using the interval Data Type in Calculations
+SELECT 
+timestamp_column,
+interval_column,
+timestamp_column - interval_column AS new_date
+FROM date_time_types
+
+--Transforming Values from One Type to Another with CAST
+SELECT timestamp_column, CAST(timestamp_column AS varchar(10)) FROM date_time_types;
+
+SELECT timestamp_column:: varchar(10) FROM date_time_types; --shortcut for CAST in PostgresSQL
+
+SELECT numeric_column,
+CAST(numeric_column AS integer),
+CAST(numeric_column AS varchar(6))
+FROM number_data_types;
+
+SELECT CAST(char_column AS integer) FROM char_data_types;-- Intentional error.Numbers can't become integers
+
