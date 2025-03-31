@@ -258,3 +258,66 @@ WHERE geo_name ILIKE '%mill%'
 TO '/Users/augustineennin/Desktop/us_counties_mill_export.txt'
 WITH (FORMAT CSV, HEADER, DELIMITER '|');
 
+
+--CHAPTER 5 BASIC MATH AND STATISTICS
+
+--Adding and Subtracting Columns
+
+SELECT geo_name,
+state_us_abbreviation AS "st",
+p0010003 AS "Whilte Alone",
+p0010004 AS "Black Alone",
+p0010003 + p0010004 AS "Total White and Black"
+FROM us_counties_2010;
+
+
+SELECT geo_name,	state_us_abbreviation AS "st",
+p0010001 AS "Total",
+p0010003 + p0010004 + p0010005 + p0010006 + p0010007 + p0010008 + p0010009 AS "All Races",
+(p0010003 + p0010004 + p0010005 + p0010006 + p0010007 + p0010008 + p0010009) - p0010001 AS "Difference" FROM us_counties_2010
+ORDER BY "Difference" DESC;
+
+--Finding Percentage of the Whole
+SELECT geo_name, state_us_abbreviation AS "st", (CAST (p0010006 AS numeric(8,1))/p0010001)*100 AS "pct_asian"
+FROM us_counties_2010
+ORDER BY "pct_asian" DESC;
+
+CREATE TABLE percent_change(
+department varchar(20),
+spend_2014 numeric(10,2),
+spend_2017 numeric(10,2)
+);
+
+INSERT INTO percent_change
+VALUES 
+('Building', 250000, 289000),
+('Assessor', 178556, 179500),
+('Library', 87777, 90001),
+('Clerk', 451980, 650000),
+('Police', 250000, 223000),
+('Recreation', 199000, 195000);
+
+SELECT department, 
+spend_2014,
+spend_2017,
+round((spend_2017 - spend_2014) / spend_2014 * 100, 1) AS "pc_change" FROM percent_change;
+
+--Aggregate functions for Average and Sums
+SELECT sum(p0010001) AS "County Sum", round(avg(p0010001), 0) AS "County AVerage" FROM us_counties_2010;
+
+--Finding the median
+CREATE TABLE percentile_test(
+numbers integer
+);
+
+INSERT INTO percentile_test (numbers) VALUES (1), (2), (3), (4), (5), (6);
+
+SELECT percentile_cont(0.5) WITHIN GROUP (ORDER BY numbers) FROM percentile_test;
+
+--1st, 2nd and 3rd quatile from the us_counties_2010 data
+SELECT unnest(
+percentile_cont(array[.25, .5, .75])
+WITHIN GROUP (ORDER BY p0010001)) AS "quartiles" FROM us_counties_2010;
+
+--Finding the mode
+SELECT mode() WITHIN GROUP (ORDER BY p0010001) FROM us_counties_2010;
